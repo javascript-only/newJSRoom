@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>자바스크립트 강의 목록</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <h1>자바스크립트 테스트</h1>
+
+    <select id="langSelect">
+      <option value="js">Javascript</option>
+      <option value="html">HTML</option>
+    </select>
+
+    <textarea
+      id="codeBox"
+      rows="10"
+      cols="60"
+      placeholder="Javascript code"
+    ></textarea>
+    <button id="runBtn">실행</button>
+    <pre id="resultBox"></pre>
+    <iframe id="preview" style="width: 100%; height: 200px"></iframe>
+  </body>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const runBtn = document.getElementById("runBtn");
+      const codeBox = document.getElementById("codeBox");
+      const resultBox = document.getElementById("resultBox");
+      const preview = document.getElementById("preview");
+      const langSelect = document.getElementById("langSelect");
+
+      runBtn.addEventListener("click", async () => {
+        const code = codeBox.value;
+        const lang = langSelect.value;
+
+        if (lang === "js") {
+          try {
+            const res = await fetch("/run", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ code }),
+            });
+            const data = await res.json();
+            resultBox.textContent = data.result;
+            preview.srcdoc = "";
+          } catch (err) {
+            resultBox.textContent = "서버 오류: " + err.message;
+          }
+        } else if (lang === "html") {
+          preview.srcdoc = code;
+          resultBox.textContent = "HTML 실행 완료";
+        }
+      });
+    });
+  </script>
+</html>
