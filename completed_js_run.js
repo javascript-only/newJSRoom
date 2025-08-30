@@ -3,7 +3,6 @@ const path = require("path");
 const readline = require("readline");
 
 const rootDir = __dirname;
-
 // 콘솔입력 대기
 function ask(question) {
   // 입력 받기
