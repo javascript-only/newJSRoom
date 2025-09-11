@@ -2,7 +2,8 @@ const fs = require("fs");
 const path = require("path");
 const readline = require("readline");
 
-const rootDir = __dirname;
+const rootDir = path.join(__dirname, "docs");
+
 // 콘솔입력 대기
 function ask(question) {
   // 입력 받기
@@ -19,7 +20,7 @@ function ask(question) {
 }
 
 // 루트 폴더 가져오기
-function getFolders(dir, basePath = "") {
+function getFolders(dir) {
   return fs
     .readdirSync(dir)
     .filter((f) => fs.lstatSync(path.join(dir, f)).isDirectory())
@@ -64,9 +65,14 @@ async function run() {
   jsFiles.forEach((f, i) => console.log(`${i + 1}. ${f}`));
 
   const fileIndex = await ask("\n실행할 파일 번호를 입력해주세요");
-  const filePath = path.join(filesPath, jsFiles[parseInt(fileIndex) - 1]);
+  const selectedFile = jsFiles[parseInt(fileIndex) - 1];
 
-  if (!filePath) return console.log("☢️ 잘못된 번호를 입력하셨습니다!");
+  if (!selectedFile) return console.log("☢️ 잘못된 번호를 선택하셨습니다.");
+
+  const filePath = path.resolve(filesPath, selectedFile);
+
+  if (!fs.existsSync(filePath))
+    return console.log("❌ 파일이 존재하지 않습니다");
 
   console.log(`\n 🚀 실행 중: ${path.relative(rootDir, filePath)}`);
   require(filePath);
